@@ -1,15 +1,38 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
 	fmt.Println("Youtube downloader START")
-	Download("https://www.youtube.com/watch?v=UaUa_0qPPgc", "test")
+	readURLFromFile("urls") //to lazy to implement a commandline parser just going to hardcode it
 }
+
+func readURLFromFile(fileName string) {
+	readFile, err := os.Open(fileName)
+	CheckError(err)
+	fileScanner := bufio.NewScanner(readFile)
+	fileScanner.Split(bufio.ScanLines)
+	threads := 0
+	for fileScanner.Scan() {
+		threads += 1
+	}
+	//wg := new(sync.WaitGroup)
+	for fileScanner.Scan() {
+		ss := strings.Split(fileScanner.Text(), " ") //splits argument into dirname and youtube link
+		Download(ss[1], ss[0])                       //apparently yt-dlp deadlocks when bieng multithreaded
+		//go Download(ss[0], ss[1])                   //destroy every network you are in using a only file with over 10links
+	}
+	readFile.Close()
+}
+
 func Download(url string, foldername string) {
+	fmt.Println("Downloading: ", foldername)
 	out, e := exec.Command("cmd.exe", "/c", "mkdir", foldername).Output() //why windows just why do you have to make things harder
 	CheckError(e)
 	fmt.Printf("%s", out)
