@@ -6,13 +6,13 @@ import (
 )
 
 func main() {
-	fmt.Println("Internet is shit, have fun waiting")
+	fmt.Println("Youtube downloader START")
+	Download("https://www.youtube.com/watch?v=UaUa_0qPPgc")
 }
 func Download(url string) {
-	cmd := exec.Command(".\\yt-dlp.exe")
-
-	e := cmd.Run()
+	out, e := exec.Command(".\\yt-dlp", "-f", "ba", "-x", "--audio-format", "mp3", url, "-o", "%(title)s.%(ext)s").Output() //yt-dlp -f 'ba' -x --audio-format mp3 $2 -o '%(title)s.%(ext)s' ORIGINAL COMMAND
 	CheckError(e)
+	fmt.Printf("%s", out)
 }
 
 func CheckError(e error) {
