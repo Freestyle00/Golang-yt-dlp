@@ -18,11 +18,12 @@ func readURLFromFile(fileName string) {
 	CheckError(err)
 	fileScanner := bufio.NewScanner(readFile)
 	fileScanner.Split(bufio.ScanLines)
-	threads := 0
-	for fileScanner.Scan() {
-		threads += 1
-	}
+	//threads := 0
+	//for fileScanner.Scan() {
+	//	threads += 1
+	//}
 	//wg := new(sync.WaitGroup)
+	//wg.Add(threads)
 	for fileScanner.Scan() {
 		ss := strings.Split(fileScanner.Text(), " ") //splits argument into dirname and youtube link
 		Download(ss[1], ss[0])                       //apparently yt-dlp deadlocks when bieng multithreaded
@@ -41,6 +42,7 @@ func Download(url string, foldername string) {
 	e = cmd.Run()
 	CheckError(e)
 	fmt.Printf("%s", out)
+	//defer wg.Done()
 }
 
 func CheckError(e error) {
